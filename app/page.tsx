@@ -30,7 +30,7 @@ export default function Home() {
           </p>
 
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-16">
-            <Link href="/session">
+            <Link href="/sesi-fokus">
               <Button size="lg" className="gap-2 group">
                 Mulai Fokus Sekarang
                 <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
@@ -173,7 +173,7 @@ export default function Home() {
             Mulai sesi Pomodoro pertama kamu sekarang. Gratis, tanpa daftar,
             langsung pakai!
           </p>
-          <Link href="/session">
+          <Link href="/sesi-fokus">
             <Button
               size="lg"
               className="bg-[#5B9BD5] text-[#5B9BD5] hover:text-[#5B9BD5] hover:bg-[#E3F2FD] shadow-xl gap-2 group"

@@ -7,8 +7,11 @@ import Navbar from "../components/Navbar";
 import { Badge } from "../components/Badge";
 import { ProgressBar } from "../components/ProgressBar";
 import { Button } from "../components/Button";
+import { useFaceLandmarkerScores } from "../hooks/useFaceLandmarkerScores";
 
 export default function SesiFokus() {
+
+    const { videoRef, loading, ready, cameraOn, scores, startCamera, stopCamera } = useFaceLandmarkerScores();
 
     const pomodoro = usePomodoroTimer();
 
@@ -33,6 +36,16 @@ export default function SesiFokus() {
         }
     };
 
+    const handleStart = async () => {
+        await startCamera();
+        pomodoro.start();
+    }
+
+    const handleStop = async () => {
+        stopCamera();
+        pomodoro.reset();
+    }
+
     return (
         <div className="min-h-screen bg-gradient-to-b from-[#F8FAFB] to-[#E3F2FD]">
             <Navbar />
@@ -53,9 +66,41 @@ export default function SesiFokus() {
 
                             {/* Timer Display */}
                             <Card className="text-center" padding="lg">
-                                <div className={`w-80 h-80 mx-auto rounded-full ${sessionColors[pomodoro.sessionType]} bg-opacity-10 border-8 border-${pomodoro.sessionType === 'focus' ? '[#5B9BD5]' : '[#4ECDC4]'} flex items-center justify-center mb-8`}>
+                                <div className="grid grid-cols-3 mb-8">
+                                    <div className="relative col-span-2  flex flex-col ">
+                                        <video
+                                            ref={videoRef}
+                                            autoPlay
+                                            muted
+                                            playsInline
+                                            className="relative w-full h-full max-w-[640px] rounded-2xl shadow-lg" />
+                                        <div className={`absolute inset-0 w-full h-full bg-opacity-50 flex items-center justify-center transition-opacity duration-500 ${cameraOn ? 'opacity-0 pointer-events-none' : 'opacity-100'}`}>
+                                            <p className="font-bold">Click Start to turn on your camera</p>
+                                        </div>
+                                    </div>
+                                    <div className="col-span-1 p-8 flex flex-col">
+                                        <p>
+                                            <strong>Face detected:</strong> {scores.faceDetected ? 'Yes' : 'No'}
+                                        </p>
+                                        <p>
+                                            <strong>headDownScore:</strong> {scores.headDownScore.toFixed(3)}
+                                        </p>
+                                        <p>
+                                            <strong>gazeDownScore:</strong> {scores.gazeDownScore.toFixed(3)}
+                                        </p>
+
+                                        <div className="p-4 border border-2 flex flex-col mt-8 text-left">
+                                            <p className="font-bold text-center">Interpretasi Hasil</p>
+                                            <ul className="space-y-2">
+                                                <li><span className="font-bold">Head Down Score 1</span>: Kepala Menunduk</li>
+                                                <li><span className="font-bold">Gaze Down Score 1</span>: Arah Pandang ke Bawah</li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div className={`w-50 h-20 mx-auto rounded-2xl ${sessionColors[pomodoro.sessionType]} bg-opacity-10 border-8 border-${pomodoro.sessionType === 'focus' ? '[#5B9BD5]' : '[#4ECDC4]'} flex items-center justify-center mb-8`}>
                                     <div>
-                                        <div className="text-7xl font-bold text-white mb-2 font-mono">
+                                        <div className="text-2xl font-bold text-white font-mono">
                                             {pomodoro.formatTime(pomodoro.timeLeft)}
                                         </div>
                                         <div className="text-white">
@@ -76,10 +121,11 @@ export default function SesiFokus() {
                                         <Button
                                             size="lg"
                                             className="gap-2 px-12"
-                                            onClick={pomodoro.start}
+                                            onClick={handleStart}
+                                            disabled={!ready || loading || cameraOn}
                                         >
                                             <Play className="w-5 h-5" />
-                                            Mulai
+                                            {loading ? 'Memuat...' : 'Mulai'}
                                         </Button>
                                     ) : (
                                         <Button
@@ -97,7 +143,8 @@ export default function SesiFokus() {
                                         variant="outline"
                                         size="lg"
                                         className="gap-2"
-                                        onClick={pomodoro.reset}
+                                        onClick={handleStop}
+                                        disabled={!cameraOn}
                                     >
                                         <RotateCcw className="w-5 h-5" />
                                         Reset

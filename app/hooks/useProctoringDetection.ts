@@ -32,11 +32,63 @@ type PhoneState = {
   maxConfidence: number;
 };
 
+type UsingPhoneLevel = 0 | 1 | 2 | 3;
+
+type UsingPhoneWarningReason =
+  | "FIRST_DETECTION"
+  | "LEVEL_1"
+  | "LEVEL_2"
+  | "LEVEL_3";
+
+type UsingPhoneWarning = {
+  isOpen: boolean;
+  level: UsingPhoneLevel;
+  count: number;
+  reason: UsingPhoneWarningReason | null;
+  title: string;
+  message: string;
+};
+
 const INITIAL_PHONE_STATE: PhoneState = {
   detections: [],
   phoneVisible: false,
   maxConfidence: 0,
 };
+
+const INITIAL_USING_PHONE_WARNING: UsingPhoneWarning = {
+  isOpen: false,
+  level: 0,
+  count: 0,
+  reason: null,
+  title: "",
+  message: "",
+};
+
+function createWarningPayload(
+  reason: UsingPhoneWarningReason,
+  level: UsingPhoneLevel,
+  count: number,
+): UsingPhoneWarning {
+  if (reason === "FIRST_DETECTION") {
+    return {
+      isOpen: false,
+      level,
+      count,
+      reason,
+      title: "",
+      message: "",
+    };
+  }
+
+  return {
+    isOpen: true,
+    level,
+    count,
+    reason,
+    title: `Peringatan USING_PHONE Level ${level}`,
+    message: `Status USING_PHONE telah terdeteksi ${count} kali.`,
+  };
+}
 
 export function useProctoringDetection() {
   const videoRef = useRef<HTMLVideoElement | null>(null);
@@ -54,6 +106,10 @@ export function useProctoringDetection() {
   const lastLogTimeRef = useRef(0);
 
   const latestPhoneDetectionsRef = useRef<PhoneDetection[]>([]);
+  const isUsingPhoneActiveRef = useRef(false);
+  const usingPhoneCountRef = useRef(0);
+  const usingPhoneLevelRef = useRef<UsingPhoneLevel>(0);
+
   const temporalSmootherRef = useRef(
     new TemporalSmoother({
       headDownThreshold: 0.58,
@@ -79,6 +135,13 @@ export function useProctoringDetection() {
   const [decision, setDecision] =
     useState<ProctoringDecision>(INITIAL_DECISION);
 
+  const [usingPhoneCount, setUsingPhoneCount] = useState(0);
+  const [usingPhoneLevel, setUsingPhoneLevel] = useState<UsingPhoneLevel>(0);
+  const [usingPhoneWarning, setUsingPhoneWarning] = useState<UsingPhoneWarning>(
+    INITIAL_USING_PHONE_WARNING,
+  );
+  const [usingPhoneAudioTick, setUsingPhoneAudioTick] = useState(0);
+
   const [loading, setLoading] = useState(false);
   const [ready, setReady] = useState(false);
   const [cameraOn, setCameraOn] = useState(false);
@@ -92,11 +155,68 @@ export function useProctoringDetection() {
 
   const resetStates = useCallback(() => {
     latestPhoneDetectionsRef.current = [];
+    isUsingPhoneActiveRef.current = false;
+    usingPhoneCountRef.current = 0;
+    usingPhoneLevelRef.current = 0;
+
     temporalSmootherRef.current.reset();
 
     setFaceScores(INITIAL_FACE_SCORES);
     setPhoneState(INITIAL_PHONE_STATE);
     setDecision(INITIAL_DECISION);
+    setUsingPhoneCount(0);
+    setUsingPhoneLevel(0);
+    setUsingPhoneWarning(INITIAL_USING_PHONE_WARNING);
+    setUsingPhoneAudioTick(0);
+  }, []);
+
+  const dismissUsingPhoneWarning = useCallback(() => {
+    setUsingPhoneWarning((prev) => ({
+      ...prev,
+      isOpen: false,
+    }));
+  }, []);
+
+  const handleUsingPhoneIncident = useCallback(() => {
+    const nextCount = usingPhoneCountRef.current + 1;
+    usingPhoneCountRef.current = nextCount;
+    setUsingPhoneCount(nextCount);
+
+    const shouldPlayAudio =
+      nextCount === 1 || nextCount === 5 || nextCount === 10 || nextCount === 15;
+
+    if (shouldPlayAudio) {
+      setUsingPhoneAudioTick((prev) => prev + 1);
+    }
+
+    if (nextCount === 5) {
+      usingPhoneLevelRef.current = 1;
+      setUsingPhoneLevel(1);
+      setUsingPhoneWarning(createWarningPayload("LEVEL_1", 1, nextCount));
+      return;
+    }
+
+    if (nextCount === 10) {
+      usingPhoneLevelRef.current = 2;
+      setUsingPhoneLevel(2);
+      setUsingPhoneWarning(createWarningPayload("LEVEL_2", 2, nextCount));
+      return;
+    }
+
+    if (nextCount === 15) {
+      usingPhoneLevelRef.current = 3;
+      setUsingPhoneLevel(3);
+      setUsingPhoneWarning(createWarningPayload("LEVEL_3", 3, nextCount));
+      return;
+    }
+
+    setUsingPhoneWarning(
+      createWarningPayload(
+        "FIRST_DETECTION",
+        usingPhoneLevelRef.current,
+        nextCount,
+      ),
+    );
   }, []);
 
   const stopCamera = useCallback(() => {
@@ -194,11 +314,22 @@ export function useProctoringDetection() {
 
     setDecision(nextDecision);
 
+    const isUsingPhone = nextDecision.status === "USING_PHONE";
+
+    if (isUsingPhone) {
+      if (!isUsingPhoneActiveRef.current) {
+        isUsingPhoneActiveRef.current = true;
+        handleUsingPhoneIncident();
+      }
+    } else {
+      isUsingPhoneActiveRef.current = false;
+    }
+
     if (nowMs - lastLogTimeRef.current > 500) {
       console.log("Proctoring decision:", nextDecision);
       lastLogTimeRef.current = nowMs;
     }
-  }, [detectYoloOnce]);
+  }, [detectYoloOnce, handleUsingPhoneIncident]);
 
   const startCamera = useCallback(async () => {
     const video = videoRef.current;
@@ -280,6 +411,10 @@ export function useProctoringDetection() {
     faceScores,
     phoneState,
     decision,
+    usingPhoneCount,
+    usingPhoneLevel,
+    usingPhoneWarning,
+    usingPhoneAudioTick,
 
     loading,
     ready,
@@ -287,5 +422,6 @@ export function useProctoringDetection() {
 
     startCamera,
     stopCamera,
+    dismissUsingPhoneWarning,
   };
 }

@@ -1,5 +1,7 @@
 "use client";
 
+import { useEffect, useRef } from "react";
+
 import {
   AlertCircle,
   Clock,
@@ -24,6 +26,7 @@ import Navbar from "../components/Navbar";
 import { Badge } from "../components/Badge";
 import { ProgressBar } from "../components/ProgressBar";
 import { Button } from "../components/Button";
+import { UsingPhoneWarningModal } from "../components/UsingPhoneWarningModal";
 
 export default function SesiFokus() {
   const {
@@ -36,9 +39,15 @@ export default function SesiFokus() {
     cameraOn,
     startCamera,
     stopCamera,
+    usingPhoneWarning,
+    usingPhoneAudioTick,
+    dismissUsingPhoneWarning,
   } = useProctoringDetection();
 
   const pomodoro = usePomodoroTimer();
+  const alertAudioRef = useRef<HTMLAudioElement | null>(null);
+  const pausePomodoro = pomodoro.pause;
+  const isPomodoroRunning = pomodoro.isRunning;
 
   const sessionLabels = {
     focus: "Sesi Fokus",
@@ -163,6 +172,33 @@ export default function SesiFokus() {
     stopCamera();
     pomodoro.reset();
   };
+
+  const handleWarningPause = () => {
+    pausePomodoro();
+    dismissUsingPhoneWarning();
+  };
+
+  useEffect(() => {
+    if (usingPhoneAudioTick === 0) return;
+
+    if (!alertAudioRef.current) {
+      alertAudioRef.current = new Audio("/audio/hidup-jokowi.mp3");
+      alertAudioRef.current.preload = "auto";
+    }
+
+    const player = alertAudioRef.current;
+    player.currentTime = 0;
+
+    void player.play().catch((error) => {
+      console.warn("Audio peringatan tidak dapat diputar:", error);
+    });
+  }, [usingPhoneAudioTick]);
+
+  useEffect(() => {
+    if (usingPhoneWarning.isOpen && isPomodoroRunning) {
+      pausePomodoro();
+    }
+  }, [usingPhoneWarning.isOpen, isPomodoroRunning, pausePomodoro]);
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-[#F8FAFB] to-[#E3F2FD]">
@@ -485,6 +521,14 @@ export default function SesiFokus() {
           </div>
         </div>
       </div>
+
+      <UsingPhoneWarningModal
+        open={usingPhoneWarning.isOpen}
+        level={usingPhoneWarning.level}
+        count={usingPhoneWarning.count}
+        onPause={handleWarningPause}
+        onClose={dismissUsingPhoneWarning}
+      />
     </div>
   );
 }

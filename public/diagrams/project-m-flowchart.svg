@@ -1,0 +1,184 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 2400" role="img" aria-labelledby="title desc">
+  <title id="title">Flowchart Project M App</title>
+  <desc id="desc">Diagram alur aplikasi Project M dari landing page, inisialisasi sistem fokus, loop deteksi visual, hingga respons warning dan reset sesi.</desc>
+
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#f8fafc"/>
+      <stop offset="100%" stop-color="#e3f2fd"/>
+    </linearGradient>
+    <linearGradient id="titleBg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#2c3e50"/>
+      <stop offset="100%" stop-color="#5b9bd5"/>
+    </linearGradient>
+    <linearGradient id="sectionBg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#ffffff"/>
+      <stop offset="100%" stop-color="#f8fbff"/>
+    </linearGradient>
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="8" stdDeviation="10" flood-color="#0f172a" flood-opacity="0.12" />
+    </filter>
+    <marker id="arrow" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto" markerUnits="strokeWidth">
+      <path d="M 0 0 L 12 6 L 0 12 z" fill="#5b9bd5" />
+    </marker>
+    <style>
+      .label { font-family: Inter, Arial, sans-serif; fill: #1f2937; font-size: 28px; }
+      .small { font-family: Inter, Arial, sans-serif; fill: #4b5563; font-size: 22px; }
+      .tiny { font-family: Inter, Arial, sans-serif; fill: #6b7280; font-size: 18px; }
+      .title { font-family: Inter, Arial, sans-serif; fill: #ffffff; font-weight: 700; font-size: 42px; }
+      .subtitle { font-family: Inter, Arial, sans-serif; fill: #eaf4ff; font-size: 22px; }
+      .node { fill: url(#sectionBg); stroke: #5b9bd5; stroke-width: 3; rx: 22; ry: 22; filter: url(#shadow); }
+      .node-dark { fill: #2c3e50; stroke: #2c3e50; stroke-width: 3; rx: 22; ry: 22; filter: url(#shadow); }
+      .node-accent { fill: #5b9bd5; stroke: #5b9bd5; stroke-width: 3; rx: 22; ry: 22; filter: url(#shadow); }
+      .node-soft { fill: #ffffff; stroke: #cbd5e1; stroke-width: 2.5; rx: 18; ry: 18; filter: url(#shadow); }
+      .decision { fill: #fff8e7; stroke: #f59e0b; stroke-width: 3; filter: url(#shadow); }
+      .section { fill: rgba(255,255,255,0.7); stroke: #bfdbfe; stroke-width: 2; rx: 28; ry: 28; }
+      .arrow { stroke: #5b9bd5; stroke-width: 4; fill: none; marker-end: url(#arrow); }
+      .arrow-soft { stroke: #94a3b8; stroke-width: 3; fill: none; marker-end: url(#arrow); }
+      .badge { font-family: Inter, Arial, sans-serif; fill: #0f172a; font-size: 18px; font-weight: 700; }
+    </style>
+  </defs>
+
+  <rect x="0" y="0" width="1600" height="2400" fill="url(#bg)" />
+
+  <rect x="70" y="60" width="1460" height="150" rx="32" ry="32" fill="url(#titleBg)" filter="url(#shadow)" />
+  <text x="800" y="118" text-anchor="middle" class="title">Project M App Flowchart</text>
+  <text x="800" y="155" text-anchor="middle" class="subtitle">Landing page, Pomodoro, proctoring detection, warning, dan reset sesi</text>
+
+  <rect x="70" y="250" width="1460" height="265" class="section" />
+  <text x="120" y="305" class="badge">1. Entry Flow</text>
+  <rect x="120" y="335" width="300" height="120" class="node-dark" />
+  <text x="270" y="378" text-anchor="middle" class="label" fill="#ffffff">User membuka /</text>
+  <text x="270" y="410" text-anchor="middle" class="tiny" fill="#dbeafe">Landing page Project M</text>
+
+  <line x1="420" y1="395" x2="485" y2="395" class="arrow" />
+  <rect x="500" y="335" width="320" height="120" class="node" />
+  <text x="660" y="376" text-anchor="middle" class="label">Klik CTA</text>
+  <text x="660" y="408" text-anchor="middle" class="small">Mulai Fokus Sekarang</text>
+
+  <line x1="820" y1="395" x2="885" y2="395" class="arrow" />
+  <rect x="900" y="318" width="510" height="154" class="node-accent" />
+  <text x="1155" y="364" text-anchor="middle" class="label" fill="#ffffff">/sesi-fokus/page.tsx</text>
+  <text x="1155" y="398" text-anchor="middle" class="small" fill="#ffffff">Client Component</text>
+  <text x="1155" y="432" text-anchor="middle" class="tiny" fill="#eff6ff">Halaman fokus aktif dimuat</text>
+
+  <rect x="70" y="550" width="1460" height="290" class="section" />
+  <text x="120" y="605" class="badge">2. Setup & Init</text>
+  <rect x="120" y="640" width="270" height="110" class="node-soft" />
+  <text x="255" y="680" text-anchor="middle" class="label">Mount halaman</text>
+  <text x="255" y="712" text-anchor="middle" class="tiny">useEffect / hooks aktif</text>
+
+  <line x1="390" y1="695" x2="455" y2="695" class="arrow-soft" />
+  <rect x="470" y="640" width="290" height="110" class="node-soft" />
+  <text x="615" y="680" text-anchor="middle" class="label">usePomodoroTimer</text>
+  <text x="615" y="712" text-anchor="middle" class="tiny">Timer fokus dan break</text>
+
+  <line x1="760" y1="695" x2="825" y2="695" class="arrow-soft" />
+  <rect x="840" y="640" width="300" height="110" class="node-soft" />
+  <text x="990" y="680" text-anchor="middle" class="label">useProctoringDetection</text>
+  <text x="990" y="712" text-anchor="middle" class="tiny">Kamera, YOLO, MediaPipe</text>
+
+  <line x1="1140" y1="695" x2="1205" y2="695" class="arrow-soft" />
+  <rect x="1220" y="620" width="270" height="150" class="node-soft" />
+  <text x="1355" y="662" text-anchor="middle" class="label">Init model</text>
+  <text x="1355" y="694" text-anchor="middle" class="tiny">Face Landmarker</text>
+  <text x="1355" y="726" text-anchor="middle" class="tiny">+ YOLO ONNX</text>
+
+  <line x1="1355" y1="770" x2="1355" y2="825" class="arrow" />
+  <text x="1355" y="860" text-anchor="middle" class="small">ready = true</text>
+
+  <rect x="70" y="910" width="1460" height="395" class="section" />
+  <text x="120" y="965" class="badge">3. Start Session</text>
+  <rect x="120" y="1000" width="280" height="120" class="node-accent" />
+  <text x="260" y="1040" text-anchor="middle" class="label" fill="#ffffff">User klik Mulai Fokus</text>
+  <text x="260" y="1072" text-anchor="middle" class="tiny" fill="#eff6ff">handleStart()</text>
+
+  <line x1="400" y1="1060" x2="465" y2="1060" class="arrow" />
+  <rect x="480" y="1000" width="330" height="120" class="decision" />
+  <text x="645" y="1040" text-anchor="middle" class="label">Kamera sudah aktif?</text>
+  <text x="645" y="1072" text-anchor="middle" class="tiny">Cek sebelum startCamera()</text>
+
+  <line x1="810" y1="1060" x2="880" y2="1060" class="arrow" />
+  <rect x="900" y="980" width="280" height="160" class="node-soft" />
+  <text x="1040" y="1020" text-anchor="middle" class="label">startCamera()</text>
+  <text x="1040" y="1052" text-anchor="middle" class="tiny">getUserMedia()</text>
+  <text x="1040" y="1084" text-anchor="middle" class="tiny">video.play()</text>
+
+  <line x1="1180" y1="1060" x2="1245" y2="1060" class="arrow-soft" />
+  <rect x="1260" y="980" width="190" height="160" class="node-soft" />
+  <text x="1355" y="1020" text-anchor="middle" class="label">cameraOn</text>
+  <text x="1355" y="1052" text-anchor="middle" class="tiny">true</text>
+  <text x="1355" y="1084" text-anchor="middle" class="tiny">reset state</text>
+
+  <line x1="1360" y1="1140" x2="1360" y2="1195" class="arrow" />
+  <rect x="1080" y="1200" width="550" height="78" class="node-soft" />
+  <text x="1355" y="1247" text-anchor="middle" class="label">Start loop deteksi + openCameraPopup() + pomodoro.start()</text>
+
+  <rect x="70" y="1360" width="1460" height="770" class="section" />
+  <text x="120" y="1415" class="badge">4. Detection Loop</text>
+
+  <rect x="120" y="1460" width="280" height="115" class="node-soft" />
+  <text x="260" y="1500" text-anchor="middle" class="label">Loop tiap 100 ms</text>
+  <text x="260" y="1532" text-anchor="middle" class="tiny">useProctoringDetection</text>
+
+  <line x1="400" y1="1518" x2="470" y2="1518" class="arrow" />
+  <rect x="490" y="1445" width="290" height="150" class="node-soft" />
+  <text x="635" y="1486" text-anchor="middle" class="label">MediaPipe</text>
+  <text x="635" y="1518" text-anchor="middle" class="tiny">detectForVideo()</text>
+  <text x="635" y="1550" text-anchor="middle" class="tiny">headDownScore + gazeDownScore</text>
+
+  <line x1="780" y1="1518" x2="850" y2="1518" class="arrow" />
+  <rect x="870" y="1445" width="290" height="150" class="node-soft" />
+  <text x="1015" y="1486" text-anchor="middle" class="label">YOLO ONNX</text>
+  <text x="1015" y="1518" text-anchor="middle" class="tiny">Deteksi handphone</text>
+  <text x="1015" y="1550" text-anchor="middle" class="tiny">setiap 300 ms</text>
+
+  <line x1="1160" y1="1518" x2="1230" y2="1518" class="arrow" />
+  <rect x="1250" y="1430" width="235" height="170" class="node-soft" />
+  <text x="1367" y="1472" text-anchor="middle" class="label">TemporalSmoother</text>
+  <text x="1367" y="1504" text-anchor="middle" class="tiny">Gabungkan sinyal</text>
+  <text x="1367" y="1536" text-anchor="middle" class="tiny">jadi keputusan status</text>
+
+  <line x1="1367" y1="1600" x2="1367" y2="1655" class="arrow" />
+  <rect x="470" y="1670" width="660" height="145" class="decision" />
+  <text x="800" y="1712" text-anchor="middle" class="label">Status proctoring?</text>
+  <text x="800" y="1746" text-anchor="middle" class="tiny">NORMAL, warning, USING_PHONE, atau FACE_MISSING</text>
+
+  <line x1="800" y1="1815" x2="800" y2="1865" class="arrow" />
+  <rect x="120" y="1880" width="300" height="110" class="node-soft" />
+  <text x="270" y="1920" text-anchor="middle" class="label">NORMAL</text>
+  <text x="270" y="1952" text-anchor="middle" class="tiny">UI tetap berjalan</text>
+
+  <rect x="460" y="1880" width="300" height="110" class="node-soft" />
+  <text x="610" y="1920" text-anchor="middle" class="label">WARNING</text>
+  <text x="610" y="1952" text-anchor="middle" class="tiny">Looking down / phone visible</text>
+
+  <rect x="800" y="1880" width="300" height="110" class="node-soft" />
+  <text x="950" y="1920" text-anchor="middle" class="label">USING_PHONE</text>
+  <text x="950" y="1952" text-anchor="middle" class="tiny">Increment incident count</text>
+
+  <rect x="1140" y="1880" width="300" height="110" class="node-soft" />
+  <text x="1290" y="1920" text-anchor="middle" class="label">FACE_MISSING</text>
+  <text x="1290" y="1952" text-anchor="middle" class="tiny">Wajah hilang terlalu lama</text>
+
+  <line x1="950" y1="1990" x2="950" y2="2050" class="arrow" />
+  <rect x="690" y="2060" width="520" height="95" class="node-soft" />
+  <text x="950" y="2100" text-anchor="middle" class="label">Jika warning terbuka, Pomodoro dipause</text>
+  <text x="950" y="2132" text-anchor="middle" class="tiny">Audio diputar pada incident 1 / 5 / 10 / 15</text>
+
+  <rect x="70" y="2175" width="1460" height="170" class="section" />
+  <text x="120" y="2230" class="badge">5. Exit / Reset</text>
+  <rect x="120" y="2260" width="360" height="88" class="node-dark" />
+  <text x="300" y="2296" text-anchor="middle" class="label" fill="#ffffff">User pause / reset / turn off camera</text>
+  <text x="300" y="2324" text-anchor="middle" class="tiny" fill="#dbeafe">handleStop() / stopCamera()</text>
+
+  <line x1="480" y1="2304" x2="560" y2="2304" class="arrow" />
+  <rect x="580" y="2260" width="400" height="88" class="node-soft" />
+  <text x="780" y="2294" text-anchor="middle" class="label">Stop stream + clear state</text>
+  <text x="780" y="2322" text-anchor="middle" class="tiny">close popup, reset timer, reset deteksi</text>
+
+  <line x1="980" y1="2304" x2="1060" y2="2304" class="arrow" />
+  <rect x="1080" y="2260" width="360" height="88" class="node-accent" />
+  <text x="1260" y="2294" text-anchor="middle" class="label" fill="#ffffff">Kembali ke state awal</text>
+  <text x="1260" y="2322" text-anchor="middle" class="tiny" fill="#eff6ff">Siap untuk sesi berikutnya</text>
+</svg>

@@ -107,6 +107,7 @@ export default function SesiFokus() {
             <div className="lg:col-span-2 space-y-6">
               <FocusSessionCard
                 videoRef={videoRef}
+                phoneDetections={phoneState.detections}
                 cameraOn={cameraOn}
                 loading={loading}
                 ready={ready}

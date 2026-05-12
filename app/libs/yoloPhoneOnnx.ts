@@ -181,15 +181,17 @@ function decodeYoloRows(
   for (const row of rows) {
     if (row.length < 5) continue;
 
-    const [cx, cy, w, h] = row;
+    const [boxA, boxB, boxC, boxD] = row;
     const score = row[4];
 
     if (score < config.confidenceThreshold) continue;
 
-    const x1Model = cx - w / 2;
-    const y1Model = cy - h / 2;
-    const x2Model = cx + w / 2;
-    const y2Model = cy + h / 2;
+    const [x1Model, y1Model, x2Model, y2Model] = decodeModelBox(
+      boxA,
+      boxB,
+      boxC,
+      boxD,
+    );
 
     const x1 = clamp((x1Model - input.padX) / input.scale, 0, input.srcWidth);
     const y1 = clamp((y1Model - input.padY) / input.scale, 0, input.srcHeight);
@@ -213,6 +215,24 @@ function decodeYoloRows(
   }
 
   return detections;
+}
+
+function decodeModelBox(
+  boxA: number,
+  boxB: number,
+  boxC: number,
+  boxD: number,
+): [number, number, number, number] {
+  if (boxC > boxA && boxD > boxB) {
+    return [boxA, boxB, boxC, boxD];
+  }
+
+  return [
+    boxA - boxC / 2,
+    boxB - boxD / 2,
+    boxA + boxC / 2,
+    boxB + boxD / 2,
+  ];
 }
 
 function nonMaxSuppression(

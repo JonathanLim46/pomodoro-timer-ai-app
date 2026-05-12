@@ -1,3 +1,6 @@
+"use client";
+
+import { useState } from "react";
 import { Pause, Play, RotateCcw, SkipForward, VideoOff } from "lucide-react";
 import { Badge } from "../../components/Badge";
 import { Button } from "../../components/Button";
@@ -7,6 +10,7 @@ import type { FocusSessionCardProps } from "../types";
 
 export function FocusSessionCard({
   videoRef,
+  phoneDetections,
   cameraOn,
   loading,
   ready,
@@ -22,6 +26,18 @@ export function FocusSessionCard({
   onTurnOffCamera,
   onSkipBreak,
 }: FocusSessionCardProps) {
+  const [videoSize, setVideoSize] = useState({ width: 0, height: 0 });
+  const videoWidth = videoSize.width;
+  const videoHeight = videoSize.height;
+  const shouldShowPhoneBoxes =
+    cameraOn && videoWidth > 0 && videoHeight > 0 && phoneDetections.length > 0;
+
+  const updateVideoSize = (video: HTMLVideoElement) => {
+    setVideoSize({
+      width: video.videoWidth,
+      height: video.videoHeight,
+    });
+  };
 
   return (
     <>
@@ -43,8 +59,35 @@ export function FocusSessionCard({
                 autoPlay
                 muted
                 playsInline
+                onLoadedMetadata={(event) => updateVideoSize(event.currentTarget)}
+                onResize={(event) => updateVideoSize(event.currentTarget)}
                 className="relative w-full h-full object-cover rounded-2xl shadow-lg bg-black"
               />
+
+              {shouldShowPhoneBoxes && (
+                <div className="pointer-events-none absolute inset-0 z-10 overflow-hidden rounded-2xl">
+                  {phoneDetections.map((detection, index) => {
+                    const [x1, y1, x2, y2] = detection.bbox;
+                    const left = (x1 / videoWidth) * 100;
+                    const top = (y1 / videoHeight) * 100;
+                    const width = ((x2 - x1) / videoWidth) * 100;
+                    const height = ((y2 - y1) / videoHeight) * 100;
+
+                    return (
+                      <div
+                        key={`${detection.className}-${index}-${detection.score}`}
+                        className="absolute rounded-sm border-4 border-[#EF4444] shadow-[0_0_0_1px_rgba(255,255,255,0.95),0_0_18px_rgba(239,68,68,0.85)]"
+                        style={{
+                          left: `${left}%`,
+                          top: `${top}%`,
+                          width: `${width}%`,
+                          height: `${height}%`,
+                        }}
+                      />
+                    );
+                  })}
+                </div>
+              )}
 
               <div
                 className={`absolute inset-0 w-full h-full bg-white/70 flex items-center justify-center transition-opacity duration-500 rounded-2xl ${

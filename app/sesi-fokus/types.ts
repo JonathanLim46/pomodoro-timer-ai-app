@@ -1,7 +1,11 @@
 import type { RefObject } from "react";
 import type { LucideIcon } from "lucide-react";
 import type { SessionType } from "../hooks/usePomodoroTimer";
-import type { FaceScoreState, ProctoringDecision } from "../libs/temporalRules";
+import type {
+  FaceScoreState,
+  PhoneDetection,
+  ProctoringDecision,
+} from "../libs/temporalRules";
 
 export type SessionInfo = {
   label: string;
@@ -28,6 +32,7 @@ export type FocusIndicator = {
 
 export type FocusSessionCardProps = {
   videoRef: RefObject<HTMLVideoElement | null>;
+  phoneDetections: PhoneDetection[];
   cameraOn: boolean;
   loading: boolean;
   ready: boolean;

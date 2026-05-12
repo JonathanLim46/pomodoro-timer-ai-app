@@ -18,7 +18,7 @@ export default function Navbar() {
                     </Link>
 
                     <Link
-                        href="/session"
+                        href="/sesi-fokus"
                         className="flex items-center gap-2 px-4 py-2 rounded-full bg-[#E3F2FD] text-[#5B9BD5] hover:bg-[#5B9BD5] hover:text-white transition-all duration-200"
                     >
                         <span>Study Time</span>

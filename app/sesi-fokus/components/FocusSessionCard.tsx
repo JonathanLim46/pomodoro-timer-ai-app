@@ -72,6 +72,7 @@ export function FocusSessionCard({
                     const top = (y1 / videoHeight) * 100;
                     const width = ((x2 - x1) / videoWidth) * 100;
                     const height = ((y2 - y1) / videoHeight) * 100;
+                    const confidence = Math.round(detection.score * 100);
 
                     return (
                       <div
@@ -83,7 +84,11 @@ export function FocusSessionCard({
                           width: `${width}%`,
                           height: `${height}%`,
                         }}
-                      />
+                      >
+                        <span className="absolute -left-1 -top-8 rounded-sm bg-[#EF4444] px-2 py-1 text-xs font-bold leading-none text-white shadow-[0_0_0_1px_rgba(255,255,255,0.8)]">
+                          {confidence}%
+                        </span>
+                      </div>
                     );
                   })}
                 </div>

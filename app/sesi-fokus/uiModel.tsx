@@ -1,4 +1,4 @@
-import { AlertCircle, Eye, MousePointer, Smartphone, UserX } from "lucide-react";
+import { AlertCircle, Eye, Smartphone, UserX } from "lucide-react";
 import type { SessionType } from "../hooks/usePomodoroTimer";
 import type { FaceScoreState, ProctoringDecision } from "../libs/temporalRules";
 import type { AlertInfo, FocusIndicator, SessionInfo } from "./types";
@@ -87,8 +87,6 @@ export function getDistractionIcon(
       return <UserX className={className} />;
     case "gazeDistraction":
       return <Eye className={className} />;
-    case "scrolling":
-      return <MousePointer className={className} />;
     default:
       return <AlertCircle className={className} />;
   }
@@ -121,13 +119,6 @@ export function getFocusIndicators(
       type: "gazeDistraction",
       active: decision.signals.gazeDown,
       value: `${faceScores.gazeDownScore.toFixed(2)}`,
-    },
-    {
-      icon: AlertCircle,
-      label: "Scrolling Gesture",
-      type: "scrolling",
-      active: false,
-      value: "-",
     },
   ];
 }

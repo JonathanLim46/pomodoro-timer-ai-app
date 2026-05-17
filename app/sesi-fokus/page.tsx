@@ -58,6 +58,7 @@ export default function SesiFokus() {
   };
 
   const handleTurnOffCamera = () => {
+    pausePomodoro();
     stopCamera();
   };
 
@@ -71,7 +72,7 @@ export default function SesiFokus() {
     if (usingPhoneAudioTick === 0) return;
 
     if (!alertAudioRef.current) {
-      alertAudioRef.current = new Audio("/audio/hidup-jokowi.mp3");
+      alertAudioRef.current = new Audio("/audio/voice_announcement.mp3");
       alertAudioRef.current.preload = "auto";
     }
 
@@ -96,6 +97,13 @@ export default function SesiFokus() {
       void closeCameraPopup();
     }
   }, [cameraOn, closeCameraPopup]);
+
+  // Menjaga sinkronisasi: jika kamera mati saat timer masih jalan, timer dipause.
+  useEffect(() => {
+    if (!cameraOn && isPomodoroRunning) {
+      pausePomodoro();
+    }
+  }, [cameraOn, isPomodoroRunning, pausePomodoro]);
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-[#F8FAFB] to-[#E3F2FD]">

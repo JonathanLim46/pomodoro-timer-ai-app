@@ -15,7 +15,7 @@ export type SessionInfo = {
 
 export type AlertInfo = {
   title: string;
-  type: "phone" | "headDown" | "gazeDistraction" | "scrolling";
+  type: "phone" | "headDown" | "gazeDistraction";
   border: string;
   bg: string;
   iconBg: string;
@@ -25,7 +25,7 @@ export type AlertInfo = {
 export type FocusIndicator = {
   icon: LucideIcon;
   label: string;
-  type: "phone" | "headDown" | "gazeDistraction" | "scrolling";
+  type: "phone" | "headDown" | "gazeDistraction";
   active: boolean;
   value: string;
 };
